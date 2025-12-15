@@ -1,0 +1,259 @@
+/* ====== BASE ====== */
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #0f0f0f;
+    color: #eaeaea;
+}
+
+h1, h2 {
+    text-align: center;
+    margin-top: 20px;
+}
+
+a {
+    color: #00c2ff;
+    text-decoration: none;
+}
+
+/* ====== CONTENEDORES ====== */
+
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.group {
+    background: #1b1b1b;
+    border-radius: 12px;
+    padding: 15px;
+    width: 440px;
+    box-sizing: border-box;
+}
+
+/* ====== PARTIDOS DE GRUPO ====== */
+
+.match {
+    display: grid;
+    grid-template-columns: 1.5fr 50px 20px 50px 1.5fr auto;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.team {
+    font-weight: 500;
+}
+
+.team.left {
+    text-align: right;
+}
+
+.team.right {
+    text-align: left;
+}
+
+.match input[type="number"] {
+    width: 50px;
+    text-align: center;
+    background: #111;
+    border: 1px solid #444;
+    color: white;
+    border-radius: 6px;
+}
+
+/* Ajustes para formularios dentro de las tarjetas de grupo */
+.match-form {
+    /* Alinea columnas: equipo | g1 | vs | g2 | equipo */
+    display: grid;
+    grid-template-columns: 1.6fr 56px 24px 56px 1.6fr;
+    align-items: center;
+    gap: 8px;
+}
+
+.match-form input[type="number"] {
+    width: 52px;
+    max-width: 80px;
+    text-align: center;
+    background: #111;
+    border: 1px solid #444;
+    color: white;
+    border-radius: 6px;
+}
+
+/* Mantener el pequeño espaciado entre partidos */
+.match-form {
+    margin-bottom: 8px;
+}
+
+/* Hide per-match save buttons (we will use one button per group) */
+.group .per-match-save {
+    display: none;
+}
+
+.group .group-actions {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.group .group-save {
+    background: #00c2ff;
+    color: black;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.group .group-save:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
+/* Espaciado ligero entre partidos dentro de una misma tarjeta */
+.match-form {
+    margin-bottom: 8px;
+}
+
+/* ====== BOTONES ====== */
+
+button {
+    background: #00c2ff;
+    color: black;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #009ac7;
+}
+
+/* ====== TABLAS ====== */
+
+table {
+    width: 100%;
+    margin-top: 10px;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+th, td {
+    border-bottom: 1px solid #333;
+    padding: 6px;
+    text-align: center;
+}
+
+th {
+    background: #222;
+}
+
+/* ====== PLAYOFFS ====== */
+
+.bracket-match {
+    background: #1b1b1b;
+    padding: 12px;
+    margin: 6px 0;
+    border-radius: 10px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100%;
+    max-width: none;
+}
+
+.bracket-match form {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.winner {
+    font-weight: bold;
+    color: #00ff99;
+}
+
+.loser {
+    color: #777;
+    text-decoration: line-through;
+}
+
+.vs {
+    margin: 0 6px;
+    color: #888;
+}
+
+.pick {
+    padding: 6px 12px;
+}
+
+/* Playoffs layout: two sides */
+.playoffs {
+    width: 95%;
+    max-width: 1200px;
+    margin: 20px auto;
+}
+
+.bracket-round {
+    margin-bottom: 20px;
+}
+
+.bracket-sides {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.bracket-side {
+    flex: 1 1 320px;
+}
+
+.bracket-side.left .bracket-match,
+.bracket-side.right .bracket-match {
+    margin: 6px 0;
+}
+
+.bracket-match.center {
+    display: flex;
+    justify-content: center;
+}
+
+.bracket-match form,
+.bracket-match .result-view,
+.bracket-match .slot-view {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.bracket-side {
+    min-width: 200px;
+}
+
+.slot {
+    color: #bbb;
+    font-style: italic;
+}
+
+.slot-view {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.result-view {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}

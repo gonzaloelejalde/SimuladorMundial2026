@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fase de Grupos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<h1>Fase de Grupos</h1>
+
+<div class="container">
+
+{% for g, data in group_data.items() %}
+<div class="group">
+    <h2>Grupo {{ g }}</h2>
+
+    {% for t1, t2 in data.matches %}
+        {% set key = (t1 ~ "||" ~ t2) if t1 < t2 else (t2 ~ "||" ~ t1) %}
+        {% set result = played[g][key] if key in played[g] else None %}
+
+        <form method="post" class="match-form">
+            <input type="hidden" name="group" value="{{ g }}">
+            <input type="hidden" name="t1" value="{{ t1 }}">
+            <input type="hidden" name="t2" value="{{ t2 }}">
+
+            <strong>{{ t1 }}</strong>
+            <input type="number" name="g1" min="0" value="{{ result.g1 if result else '' }}">
+
+            <strong>vs</strong>
+
+            <input type="number" name="g2" min="0" value="{{ result.g2 if result else '' }}">
+
+            <strong>{{ t2 }}</strong>
+
+            <button class="per-match-save">Guardar</button>
+        </form>
+    {% endfor %}
+
+    <div class="group-actions">
+        <button class="group-save">Guardar grupo</button>
+    </div>
+
+    <table>
+        <tr>
+            <th>Equipo</th><th>PJ</th><th>PTS</th><th>GF</th><th>GC</th><th>DG</th>
+        </tr>
+        {% for team, s in data.table %}
+        <tr>
+            <td>{{ team }}</td>
+            <td>{{ s.pj }}</td>
+            <td>{{ s.pts }}</td>
+            <td>{{ s.gf }}</td>
+            <td>{{ s.gc }}</td>
+            <td>{{ s.gf - s.gc }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endfor %}
+</div>
+
+<hr>
+<h1>Playoffs</h1>
+
+<div class="playoffs">
+{% for round in playoff_state.rounds %}
+{% set r = loop.index0 %}
+
+<div class="bracket-round">
+<h2>
+{% if round|length == 16 %}Dieciseisavos
+{% elif round|length == 8 %}Octavos
+{% elif round|length == 4 %}Cuartos
+{% elif round|length == 2 %}Semifinal
+{% else %}Final{% endif %}
+</h2>
+
+    {% set half = (round|length // 2) %}
+    {% if half >= 1 %}
+    <div class="bracket-sides">
+        <div class="bracket-side left">
+            {% for match in round[:half] %}
+            {% set m = loop.index0 %}
+            <div class="bracket-match">
+                {% if "winner" in match %}
+                    <div class="result-view">
+                        <span class="{{ 'winner' if match.winner == match.a else 'loser' }}">{{ match.a }}</span>
+                        <span class="vs">vs</span>
+                        <span class="{{ 'winner' if match.winner == match.b else 'loser' }}">{{ match.b }}</span>
+                    </div>
+                {% else %}
+                    {% if finished %}
+                        <form method="post" action="/pick_winner">
+                            <input type="hidden" name="round" value="{{ r }}">
+                            <input type="hidden" name="match" value="{{ m }}">
+                            <button class="pick" name="winner" value="{{ match.a }}">{{ match.a }}</button>
+                            <span class="vs">vs</span>
+                            <button class="pick" name="winner" value="{{ match.b }}">{{ match.b }}</button>
+                        </form>
+                    {% else %}
+                        <div class="slot-view">
+                            <span class="slot">{{ match.a }}</span>
+                            <span class="vs">vs</span>
+                            <span class="slot">{{ match.b }}</span>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="bracket-side right">
+            {% for match in round[half:] %}
+            {% set m = (half + loop.index0) %}
+            <div class="bracket-match">
+                {% if "winner" in match %}
+                    <div class="result-view">
+                        <span class="{{ 'winner' if match.winner == match.a else 'loser' }}">{{ match.a }}</span>
+                        <span class="vs">vs</span>
+                        <span class="{{ 'winner' if match.winner == match.b else 'loser' }}">{{ match.b }}</span>
+                    </div>
+                {% else %}
+                    {% if finished %}
+                        <form method="post" action="/pick_winner">
+                            <input type="hidden" name="round" value="{{ r }}">
+                            <input type="hidden" name="match" value="{{ m }}">
+                            <button class="pick" name="winner" value="{{ match.a }}">{{ match.a }}</button>
+                            <span class="vs">vs</span>
+                            <button class="pick" name="winner" value="{{ match.b }}">{{ match.b }}</button>
+                        </form>
+                    {% else %}
+                        <div class="slot-view">
+                            <span class="slot">{{ match.a }}</span>
+                            <span class="vs">vs</span>
+                            <span class="slot">{{ match.b }}</span>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+        {# Rondas con un solo partido (final) o sin división #}
+        {% for match in round %}
+        {% set m = loop.index0 %}
+        <div class="bracket-match center">
+            {% if "winner" in match %}
+                <div class="result-view">
+                    <span class="{{ 'winner' if match.winner == match.a else 'loser' }}">{{ match.a }}</span>
+                    <span class="vs">vs</span>
+                    <span class="{{ 'winner' if match.winner == match.b else 'loser' }}">{{ match.b }}</span>
+                </div>
+            {% else %}
+                {% if finished %}
+                    <form method="post" action="/pick_winner">
+                        <input type="hidden" name="round" value="{{ r }}">
+                        <input type="hidden" name="match" value="{{ m }}">
+                        <button class="pick" name="winner" value="{{ match.a }}">{{ match.a }}</button>
+                        <span class="vs">vs</span>
+                        <button class="pick" name="winner" value="{{ match.b }}">{{ match.b }}</button>
+                    </form>
+                {% else %}
+                    <div class="slot-view">
+                        <span class="slot">{{ match.a }}</span>
+                        <span class="vs">vs</span>
+                        <span class="slot">{{ match.b }}</span>
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+        {% endfor %}
+    {% endif %}
+
+</div>
+{% endfor %}
+</div>
+
+{% if playoff_state.rounds[-1]|length == 1 and "winner" in playoff_state.rounds[-1][0] %}
+<h1>🏆 CAMPEÓN: {{ playoff_state.rounds[-1][0].winner }}</h1>
+{% endif %}
+
+</body>
+<script>
+// Restaurar scroll si quedó guardado
+document.addEventListener('DOMContentLoaded', () => {
+    const y = sessionStorage.getItem('scrollY');
+    if (y) {
+        window.scrollTo(0, parseInt(y, 10));
+        sessionStorage.removeItem('scrollY');
+    }
+});
+
+document.querySelectorAll('.group-save').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const groupEl = btn.closest('.group');
+        const forms = Array.from(groupEl.querySelectorAll('form.match-form'));
+        btn.disabled = true;
+        btn.textContent = 'Guardando...';
+
+        try {
+            for (const f of forms) {
+                const fd = new FormData(f);
+                await fetch(window.location.pathname, {
+                    method: 'POST',
+                    body: fd,
+                    credentials: 'same-origin'
+                });
+            }
+            // guardar posición de scroll y recargar manteniendo lugar
+            sessionStorage.setItem('scrollY', String(window.scrollY || 0));
+            window.location.reload();
+        } catch (err) {
+            console.error('Error guardando grupo', err);
+            btn.disabled = false;
+            btn.textContent = 'Guardar grupo';
+            alert('Error al guardar. Revisa la consola.');
+        }
+    });
+});
+</script>
+</html>
